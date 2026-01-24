@@ -1,5 +1,3 @@
 bash to run:
 
-~/.claude/plugins/cache/my-marketplace/myskillslib/print_ralph.sh
-
-
+~/.claude/plugins/cache/my-marketplace/myskills/4.1.1/lib
