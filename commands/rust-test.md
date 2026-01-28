@@ -13,61 +13,14 @@ tags:
 
 # Rust 测试执行
 
-> **快捷方式**: 使用 `rust-quality-guard` skill 提供的 `run_rust_tests.py` 脚本
-
 ## 快速使用
 
 ```bash
-# 使用 rust-quality-guard skill 提供的脚本
-python3 scripts/run_rust_tests.py {{name}}
-
 # 如果项目使用 test-utils 特性
-python3 scripts/run_rust_tests.py {{name}} --features test-utils
-```
+cargo nextest run --features test-utils {{name}}
 
-## 脚本位置
-
-脚本位于 `rust-quality-guard` skill 中：
-- `scripts/run_rust_tests.py` - 测试执行和分析脚本
-
-如果当前项目中没有该脚本：
-```bash
-cp /Users/chenwei/.claude/plugins/cache/my-marketplace/myskills/4.1.12/skills/rust-quality-guard/scripts/run_rust_tests.py scripts/
-```
-
-## 脚本功能
-
-`run_rust_tests.py` 会自动：
-
-1. **环境检测**：
-   - 检测是否安装 `cargo-nextest`
-   - 检测项目是否使用 `test-utils` 特性
-   - 检测 `.config/nextest.toml` 配置文件
-
-2. **搜索测试**：
-   - 在项目中查找测试函数 `{{name}}`
-   - 显示找到的 package、file 和 test 名称
-
-3. **执行测试**：
-   - 自动选择最佳工具（cargo-nextest 或 cargo test）
-   - 显示详细输出和错误堆栈
-   - 提供失败分析和修复建议
-
-## 脚本使用示例
-
-```bash
-# 运行所有测试
-python3 scripts/run_rust_tests.py
-
-# 运行指定测试
-python3 scripts/run_rust_tests.py test_login
-
-# 启用 features
-python3 scripts/run_rust_tests.py --features "test-utils"
-python3 scripts/run_rust_tests.py --all-features
-
-# 指定包
-python3 scripts/run_rust_tests.py --package my-package test_login
+# 或使用 cargo test
+cargo test --features test-utils -- {{name}} --exact --nocapture
 ```
 
 ## test-utils 特性
@@ -97,7 +50,7 @@ pub mod testing {
 ```bash
 # ✅ 正确
 cargo test --features test-utils
-python3 scripts/run_rust_tests.py --features test-utils
+cargo nextest run --features test-utils
 
 # ❌ 错误（如果代码依赖 test-utils）
 cargo test
@@ -119,8 +72,6 @@ cargo install cargo-nextest
 ```
 
 ## 直接使用 cargo 命令
-
-如果不想使用脚本，也可以直接使用 cargo 命令：
 
 ### 使用 cargo-nextest (推荐)
 
@@ -155,18 +106,9 @@ cargo test \
 - 测试名称必须完全匹配
 - 支持 `#[test]` 和 `#[tokio::test]` 等测试宏
 - `--no-capture` / `--nocapture` 选项会显示 println! 输出
-- 脚本会自动处理多个匹配测试的情况
 - 如果找不到测试，会提示检查名称
 
 ## 常见问题
-
-### 测试失败时的分析流程
-
-1. 脚本会单独执行失败的测试
-2. 对比批量和单独执行结果：
-   - 批量失败但单独通过 → 测试隔离问题 🟠
-   - 批量和单独都失败 → 代码逻辑问题 🔴
-3. 提供详细的修复建议
 
 ### 测试隔离问题
 

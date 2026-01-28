@@ -29,26 +29,12 @@ cargo-nextest 主要优势:
 # 完整的检查流程（如果项目使用 test-utils 特性，加上 --features test-utils）
 cargo fmt --check && \
 cargo clippy --features test-utils -- -W clippy::unwrap_used -W clippy::expect_used && \
-python3 scripts/check_error_tolerance.py && \
 cargo nextest run --features test-utils --retries 3
 
 # 或者使用 --all-features
 cargo fmt --check && \
 cargo clippy --all-features -- -W clippy::unwrap_used -W clippy::expect_used && \
-python3 scripts/check_error_tolerance.py && \
 cargo nextest run --all-features --retries 3
-```
-
-## 脚本位置
-
-脚本位于 `rust-quality-guard` skill 中：
-- `scripts/check_error_tolerance.py` - 错误容忍检查
-- `scripts/run_rust_tests.py` - 测试执行和分析
-
-如果当前项目中没有这些脚本：
-```bash
-# 从 skill 复制脚本
-cp /Users/chenwei/.claude/plugins/cache/my-marketplace/myskills/4.1.12/skills/rust-quality-guard/scripts/*.py scripts/
 ```
 
 ## 检查步骤
@@ -91,44 +77,12 @@ cargo clippy $USE_TEST_UTILS -- -W clippy::unwrap_used -W clippy::expect_used
 cargo clippy --all-features -- -W clippy::unwrap_used -W clippy::expect_used
 ```
 
-### 步骤 4: 错误容忍检查
+### 步骤 4: 运行测试
 
 ```bash
-# 使用 rust-quality-guard skill 提供的脚本
-python3 scripts/check_error_tolerance.py
-```
-
-### 步骤 5: 运行测试
-
-```bash
-# 使用 rust-quality-guard skill 提供的脚本
-python3 scripts/run_rust_tests.py $USE_TEST_UTILS
-
-# 或直接使用 cargo nextest（推荐）
+# 使用 cargo nextest（推荐）
 cargo nextest run $USE_TEST_UTILS --retries 3 --no-fail-fast
 ```
-
-## 使用 run_rust_tests.py 脚本
-
-`rust-quality-guard` skill 提供的测试脚本功能：
-
-```bash
-# 运行所有测试
-python3 scripts/run_rust_tests.py
-
-# 运行指定测试
-python3 scripts/run_rust_tests.py test_login
-
-# 启用 features
-python3 scripts/run_rust_tests.py --features "test-utils"
-python3 scripts/run_rust_tests.py --all-features
-```
-
-脚本会：
-- 自动检测并使用 cargo-nextest（如果可用）
-- 单独执行失败的测试以分析原因
-- 区分测试隔离问题和逻辑错误
-- 提供详细的修复建议
 
 ## FAIL FAST 原则
 
@@ -209,7 +163,6 @@ cargo nextest run
 提交代码前确认：
 - [ ] 通过 `cargo fmt --check` 格式检查
 - [ ] 通过 `cargo clippy` 检查（启用严格模式）
-- [ ] 通过 `check_error_tolerance.py` 检查无高严重度问题
 - [ ] 所有测试通过（使用 `cargo nextest run`）
 - [ ] **如果使用 test-utils 特性，测试时启用该特性**
 - [ ] **测试辅助代码使用 `#[cfg(feature = "test-utils")]` 门控**
@@ -239,9 +192,6 @@ cargo fmt --check
 # Clippy 严格模式
 cargo clippy --all-features -- -W clippy::unwrap_used -W clippy::expect_used
 
-# 错误容忍检查
-python3 scripts/check_error_tolerance.py
-
 # 运行测试（使用 cargo nextest）
 cargo nextest run --all-features --retries 3
 
@@ -249,7 +199,7 @@ cargo nextest run --all-features --retries 3
 cargo nextest run --all-features test_name1 test_name2
 
 # 完整流程（一行命令）
-cargo fmt --check && cargo clippy --all-features -- -W clippy::unwrap_used -W clippy::expect_used && python3 scripts/check_error_tolerance.py && cargo nextest run --all-features --retries 3
+cargo fmt --check && cargo clippy --all-features -- -W clippy::unwrap_used -W clippy::expect_used && cargo nextest run --all-features --retries 3
 ```
 
 ## cargo nextest 高级功能
@@ -299,7 +249,6 @@ echo "🔍 Running pre-commit checks..."
 
 cargo fmt --check
 cargo clippy --all-features -- -D warnings
-python3 scripts/check_error_tolerance.py
 cargo nextest run --all-features --retries 3
 
 echo "✅ All checks passed!"
