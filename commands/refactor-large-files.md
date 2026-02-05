@@ -199,6 +199,9 @@ rg --files -g '*.rs' --no-ignore-vcs | xargs wc -l | sort -rn | head -20
 --glob='!*.min.js'
 --glob='!package-lock.json'
 --glob='!vendor/**'
+
+# Rust 项目额外排除
+--glob='!examples/**'
 ```
 
 ## 常见反模式
